@@ -1,0 +1,92 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace MOBAChallenger
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var playerPool = new Dictionary<string, Dictionary<string, int>>();
+            string input = Console.ReadLine();
+            string[] token = input.Split();
+            while (input !="Season end")
+            {
+                if (input.Contains("->"))
+                {
+                    token = input.Split(" -> ");
+                    string player = token[0];
+                    string position = token[1];
+                    int skill = int.Parse(token[2]);
+
+                    if (!playerPool.ContainsKey(player))
+                    {
+                        playerPool.Add(player, new Dictionary<string, int>());
+                        playerPool[player].Add(position, skill);
+                    }
+                    else
+                    {
+                        if (playerPool[player].ContainsKey(position))
+                        {
+                            if (playerPool[player][position] < skill)
+                            {
+                                playerPool[player][position] = skill;
+                            }
+                        }
+                        else
+                        {
+                            playerPool[player].Add(position, skill);
+                        }
+                    }
+                }
+                else
+                {
+                    token = input.Split(" vs ");
+                    string player1 = token[0];
+                    string player2 = token[1];
+
+                    if (playerPool.ContainsKey(player1) && playerPool.ContainsKey(player2))
+                    {
+                        
+                        foreach (var position1 in playerPool[player1])
+                        {
+                            foreach (var position2 in playerPool[player2])
+                            {
+                                if (position1.Key == position2.Key)
+                                {
+                                    if (position1.Value > position2.Value)
+                                    {
+                                        playerPool.Remove(player2);
+                                    }
+                                    else if (position1.Value < position2.Value)
+                                    {
+                                        playerPool.Remove(player1);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                input = Console.ReadLine();
+            }
+            var total = new Dictionary<string, int>();
+            foreach (var player in playerPool)
+            {
+                total.Add(player.Key, 0);
+                foreach (var item in playerPool[player.Key])
+                {
+                    total[player.Key] += item.Value;
+                }
+            }
+            foreach (var item in total.OrderByDescending(x => x.Value).ThenBy(x => x.Key))
+            {
+                Console.WriteLine($"{item.Key}: {item.Value} skill");
+                foreach (var position in playerPool[item.Key].OrderByDescending(x=>x.Value).ThenBy(x=>x.Key))
+                {
+                    Console.WriteLine($"- {position.Key} <::> {position.Value}");
+                }
+            }
+        }
+    }
+}
