@@ -1,0 +1,95 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace DragonArmy
+{
+    class Dragon
+    {
+        public Dragon(string name, int health, int damage, int armor)
+        {
+            this.name = name;
+            this.health = health;
+            this.damage = damage;
+            this.armor = armor;
+        }
+        public string name { get; set; }
+        public int health { get; set; }
+        public int damage { get; set; }
+        public int armor { get; set; }
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var types = new Dictionary<string, List<Dragon>>();
+            List<Dragon> dragons = new List<Dragon>();
+            int n = int.Parse(Console.ReadLine());
+
+            for (int i = 1; i <= n; i++)
+            {
+                string[] input = Console.ReadLine()
+                    .Split();
+                string type = input[0];
+                string name = input[1];
+                int health = 0;
+                int damage = 0;
+                int armor = 0;
+                if (input[2] == "null")
+                {
+                    damage = 45;
+                }
+                else
+                {
+                    damage = int.Parse(input[2]);
+                }
+                if (input[3] == "null")
+                {
+                    health = 250;
+                }
+                else
+                {
+                    health = int.Parse(input[3]);
+                }
+                if (input[4] == "null")
+                {
+                    armor = 10;
+                }
+                else
+                {
+                    armor = int.Parse(input[4]);
+                }
+
+                if (!types.ContainsKey(type))
+                {
+                    types.Add(type, new List<Dragon>());
+                }
+                Dragon dragon = new Dragon(name, health, damage, armor);
+                if (types[type].Exists(x => x.name == dragon.name))
+                {
+                    int index = types[type].FindIndex(x => x.name == dragon.name);
+                    types[type].RemoveAt(index);
+                    types[type].Insert(index, dragon);
+                }
+                else
+                {
+                    types[type].Add(dragon);
+                }
+
+            }
+
+            foreach (var type in types)
+            {
+                double hp = type.Value.Average(x => x.health);
+                double damage = type.Value.Average(x => x.damage);
+                double armor = type.Value.Average(x => x.armor);
+                Console.WriteLine($"{type.Key}::({damage:f2}/{hp:f2}/{armor:f2})");
+
+                foreach (Dragon item in type.Value.OrderBy(x=>x.name))
+                {
+                    Console.WriteLine($"-{item.name} -> damage: {item.damage}, health: {item.health}, armor: {item.armor}");
+                }
+            }
+        }
+    }
+}
