@@ -1,0 +1,65 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace SoftUniExam
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var languages = new Dictionary<string, int>();
+            var students = new Dictionary<string, int>();
+            string[] input = Console.ReadLine()
+                .Split('-');
+            while (input[0] != "exam finished")
+            {
+                string user = input[0];
+
+                if (input[1] == "banned")
+                {
+                    students.Remove(user);
+                }
+                else
+                {
+                    string language = input[1];
+                    int points = int.Parse(input[2]);
+
+                    if (!languages.ContainsKey(language))
+                    {
+                        languages.Add(language, 1);
+                    }
+                    else
+                    {
+                        languages[language]++;
+                    }
+
+                    if (!students.ContainsKey(user))
+                    {
+                        students.Add(user, points);
+
+                    }
+                    else
+                    {
+                        if (students[user] < points)
+                        {
+                            students[user] = points;
+                        }
+                    }
+                }
+                input = Console.ReadLine()
+                .Split('-');
+            }
+            Console.WriteLine("Results:");
+            foreach (var item in students.OrderByDescending(x => x.Value).ThenBy(x => x.Key))
+            {
+                Console.WriteLine($"{item.Key} | {item.Value}");
+            }
+            Console.WriteLine("Submissions:");
+            foreach (var item in languages.OrderByDescending(x => x.Value).ThenBy(x => x.Key))
+            {
+                Console.WriteLine($"{item.Key} - {item.Value}");
+            }
+        }
+    }
+}
