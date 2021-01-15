@@ -33,7 +33,7 @@ namespace Courses
                 {
                     Console.WriteLine($"-- {student}");
                 }
-            }
+            } 
         }
     }
 }
